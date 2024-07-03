@@ -4,7 +4,7 @@ import asyncio
 import time
 from pyrogram import filters
 from pyrogram.enums import ChatMemberStatus
-from config import FORCE_SUB_CHANNEL, FORCE_SUB_CHANNEL2, ADMINS
+from config import FORCE_SUB_CHANNEL, FORCE_SUB_CHANNEL2, ADMINS, DBCHANNELS
 from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
 from pyrogram.errors import FloodWait
 from shortzy import Shortzy
@@ -56,20 +56,21 @@ async def decode(base64_string):
     string = string_bytes.decode("ascii")
     return string
 
-async def get_messages(client, message_ids):
+
+async def get_messages(client, channel,  message_ids):
     messages = []
     total_messages = 0
     while total_messages != len(message_ids):
         temb_ids = message_ids[total_messages:total_messages+200]
         try:
             msgs = await client.get_messages(
-                chat_id=client.db_channel.id,
+                chat_id=channel,
                 message_ids=temb_ids
             )
         except FloodWait as e:
             await asyncio.sleep(e.x)
             msgs = await client.get_messages(
-                chat_id=client.db_channel.id,
+                chat_id=channel,
                 message_ids=temb_ids
             )
         except:
@@ -80,8 +81,9 @@ async def get_messages(client, message_ids):
 
 async def get_message_id(client, message):
     if message.forward_from_chat:
-        if message.forward_from_chat.id == client.db_channel.id:
-            return message.forward_from_message_id
+        for x in range(len(DBCHANNELS)):
+            if message.forward_from_chat.id == client.db_channel[x].id:
+                return message.forward_from_message_id
         else:
             return 0
     elif message.forward_sender_name:
@@ -94,13 +96,44 @@ async def get_message_id(client, message):
         channel_id = matches.group(1)
         msg_id = int(matches.group(2))
         if channel_id.isdigit():
-            if f"-100{channel_id}" == str(client.db_channel.id):
-                return msg_id
+            for x in range(len(DBCHANNELS)):            
+                if f"-100{channel_id}" == str(client.db_channel[x].id):
+                    return msg_id
         else:
-            if channel_id == client.db_channel.username:
-                return msg_id
+            for x in range(len(DBCHANNELS)):
+                if channel_id == client.db_channel[x].username:
+                    return msg_id
     else:
         return 0
+
+
+async def get_channel_id(client, message):
+    if message.forward_from_chat:
+        for x in range(len(DBCHANNELS)):
+            if message.forward_from_chat.id == client.db_channel[x].id:
+                return client.db_channel[x].id
+        else:
+            return 0
+    elif message.forward_sender_name:
+        return 0
+    elif message.text:
+        pattern = r"https://t.me/(?:c/)?(.*)/(\d+)"
+        matches = re.match(pattern,message.text)
+        if not matches:
+            return 0
+        channel_id = matches.group(1)
+        msg_id = int(matches.group(2))
+        if channel_id.isdigit():
+            for x in range(len(DBCHANNELS)):            
+                if f"-100{channel_id}" == str(client.db_channel[x].id):
+                    return client.db_channel[x].id
+        else:
+            for x in range(len(DBCHANNELS)):
+                if channel_id == client.db_channel[x].username:
+                    return client.db_channel[x].id
+    else:
+        return 0
+
 
 
 def get_readable_time(seconds: int) -> str:

@@ -1,5 +1,7 @@
 import asyncio
+import os
 import random
+import sys
 import time
 import string
 from pyrogram import Client, filters
@@ -8,9 +10,9 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import FloodWait, UserIsBlocked, InputUserDeactivated
 
 from bot import Bot
-from config import ADMINS, CHANNEL_ID, FORCE_MSG, OWNER_TAG, START_MSG, CUSTOM_CAPTION, DISABLE_CHANNEL_BUTTON, PROTECT_CONTENT, OWNER_ID, CHANNEL_LINK, SHORTLINK_API_URL, SHORTLINK_API_KEY, USE_PAYMENT, USE_SHORTLINK, VERIFY_EXPIRE, TIME, TUT_VID
+from config import ADMINS, FORCE_MSG, OWNER_TAG, START_MSG, CUSTOM_CAPTION, OWNER_ID, CHANNEL_LINK, SHORTLINK_API_URL, SHORTLINK_API_KEY, USE_PAYMENT, USE_SHORTLINK, VERIFY_EXPIRE, TIME, TUT_VID
 from helper_func import get_readable_time, increasepremtime, subscribed, subscribed2, decode, get_messages, get_shortlink, get_verify_status, update_verify_status, get_exp_time
-from database.database import add_admin, add_user, del_admin, del_user, full_adminbase, full_userbase, present_admin, present_user
+from database.database import add_user, full_userbase, present_user, del_user
 
 SECONDS = TIME 
 TUT_VID = f"{TUT_VID}"
@@ -52,13 +54,16 @@ async def start_command(client: Client, message: Message):
                 base64_string = message.text.split(" ", 1)[1]
             except:
                 return
+            temp_msg = await message.reply("Please wait... 🫷")
             _string = await decode(base64_string)
-            argument = _string.split("-")
-            if len(argument) == 3:
+            argument = _string.split("+")
+            if len(argument) == 4:
                 try:
-                    start = int(int(argument[1]) / abs(client.db_channel.id))
-                    end = int(int(argument[2]) / abs(client.db_channel.id))
+                    channel = int(argument[1])
+                    start = int(argument[2])
+                    end = int(argument[3])
                 except:
+                    await temp_msg.edit(text="something went wrong! 😔")
                     return
                 if start <= end:
                     ids = range(start, end+1)
@@ -70,40 +75,38 @@ async def start_command(client: Client, message: Message):
                         i -= 1
                         if i < end:
                             break
-            elif len(argument) == 2:
+            elif len(argument) == 3:
                 try:
-                    ids = [int(int(argument[1]) / abs(client.db_channel.id))]
+                    channel = int(argument[1]) 
+                    ids = [int(argument[2])]
                 except:
+                    await temp_msg.edit(text="something went wrong! 😔")
                     return
-            temp_msg = await message.reply("Please wait... 🫷")
             try:
-                messages = await get_messages(client, ids)
+                messages = await get_messages(client, channel, ids)
             except:
                 await message.reply_text("Something went wrong..! 🥲")
                 return
             await temp_msg.delete()
             snt_msgs = []
             for msg in messages:
+                print(message.from_user.id)
                 if bool(CUSTOM_CAPTION) & bool(msg.document):
                     caption = CUSTOM_CAPTION.format(previouscaption="" if not msg.caption else msg.caption.html,    filename=msg.document.file_name)
                 else:   
-                    caption = "" if not msg.caption else msg.caption.html   
-                if DISABLE_CHANNEL_BUTTON:  
-                    reply_markup = msg.reply_markup 
-                else:   
-                    reply_markup = None 
+                    caption = "" if not msg.caption else msg.caption.html 
                 try:    
-                    snt_msg = await msg.copy(chat_id=message.from_user.id, caption=caption, parse_mode=ParseMode.HTML,  reply_markup=reply_markup, protect_content=PROTECT_CONTENT)
+                    snt_msg = await msg.copy(chat_id=message.from_user.id, caption=caption, parse_mode=ParseMode.HTML, reply_markup=None)
                     await asyncio.sleep(0.5)    
                     snt_msgs.append(snt_msg)    
                 except FloodWait as e:  
                     await asyncio.sleep(e.x)    
-                    snt_msg = await msg.copy(chat_id=message.from_user.id, caption=caption, parse_mode= ParseMode.HTML,  reply_markup=reply_markup, protect_content=PROTECT_CONTENT)
+                    snt_msg = await msg.copy(chat_id=message.from_user.id, caption=caption, parse_mode= ParseMode.HTML, reply_markup=None)
                     snt_msgs.append(snt_msg)    
-                except: 
-                    pass    
+                except Exception as e:
+                    print(e) 
                 
-            notification_msg = await message.reply(f"<b>❗️ <u>Notice</u> ❗️</b>\n\n<b>This file will be  deleted in  {SECONDS // 60} minutes. Please save or forward it to your saved messages before it gets deleted.</b>")
+            notification_msg = await message.reply(f"<b>🌺 <u>Notice</u> 🌺</b>\n<b>This file will be  deleted in  {SECONDS // 60} minutes. Please save or forward it to your saved messages before it gets deleted.</b>")
             await asyncio.sleep(SECONDS)    
             for snt_msg in snt_msgs:    
                 try:    
@@ -111,7 +114,7 @@ async def start_command(client: Client, message: Message):
                 except: 
                     pass    
             await notification_msg.edit("<b>Your file has been successfully deleted! 😼</b>")  
-            return  
+            return
     if (1 == 1):
         for i in range(1):
             if USE_SHORTLINK : 
@@ -278,84 +281,27 @@ async def auth_command(client: Bot, message: Message):
     return
 
 
-@Bot.on_message(filters.command('add_admin') & filters.private & filters.user(OWNER_ID))
-async def command_add_admin(client: Bot, message: Message):
-    while True:
-        try:
-            admin_id = await client.ask(text="Enter admin id 🔢\n /cancel to cancel : ",chat_id = message.from_user.id, timeout=60)
-        except Exception as e:
-            print(e)
-            return
-        if admin_id.text == "/cancel":
-            await admin_id.reply("Cancelled 😉!")
-            return
-        try:
-            await Bot.get_users(user_ids=admin_id.text, self=client)
-            break
-        except:
-            await admin_id.reply("❌ Error 😖\n\nThe admin id is incorrect.", quote = True)
-            continue
-    if not await present_admin(admin_id.text):
-        try:
-            await add_admin(admin_id.text)
-            await message.reply(f"Added admin <code>{admin_id.text}</code> 😼")
-            try:
-                reply_markup = InlineKeyboardMarkup(
-                    [
-                        [InlineKeyboardButton("Join Channel 👆", url=CHANNEL_LINK)]
-                    ]
-                )
-                await client.send_message(
-                    chat_id=admin_id.text,
-                    text=f"You are verified, join the channel for forwarding links for batch commands. 😁",
-                    reply_markup=reply_markup
-                )
-            except:
-                await message.reply("Failed to send invite. Please ensure that they have started the bot. 🥲")
-        except:
-            await message.reply("Failed to add admin. 😔\nSome error occurred.")
-    else:
-        await message.reply("admin already exist. 💀")
-    return
-
-
-@Bot.on_message(filters.command('del_admin') & filters.private  & filters.user(OWNER_ID))
-async def delete_admin_command(client: Bot, message: Message):
-    while True:
-        try:
-            admin_id = await client.ask(text="Enter admin id 🔢\n /cancel to cancel : ",chat_id = message.from_user.id, timeout=60)
-        except:
-            return
-        if admin_id.text == "/cancel":
-            await admin_id.reply("Cancelled 😉!")
-            return
-        try:
-            await Bot.get_users(user_ids=admin_id.text, self=client)
-            break
-        except:
-            await admin_id.reply("❌ Error\n\nThe admin id is incorrect.", quote = True)
-            continue
-    if await present_admin(admin_id.text):
-        try:
-            await del_admin(admin_id.text)
-            await message.reply(f"Admin <code>{admin_id.text}</code> removed successfully 😀")
-        except Exception as e:
-            print(e)
-            await message.reply("Failed to remove admin. 😔\nSome error occurred.")
-    else:
-        await message.reply("admin doesn't exist. 💀")
-    return
-
-@Bot.on_message(filters.command('admins')  & filters.private & filters.private)
-async def admin_list_command(client: Bot, message: Message):
-    admin_list = await full_adminbase()
-    await message.reply(f"Full admin list 📃\n<code>{admin_list}</code>")
-    return
-
-@Bot.on_message(filters.command('ping')  & filters.private & filters.user(ADMINS))
+@Bot.on_message(filters.command('ping')  & filters.private)
 async def check_ping_command(client: Bot, message: Message):
-    message.reply_text("pong!! 🏓")
+    start_t = time.time()
+    rm = await message.reply_text("Pinging....", quote=True)
+    end_t = time.time()
+    time_taken_s = (end_t - start_t) * 1000
+    await rm.edit(f"Ping 🔥!\n{time_taken_s:.3f} ms")
     return
+
+@Client.on_message(filters.private & filters.command('restart') & filters.user(OWNER_ID))
+async def restart(client, message):
+    msg = await message.reply_text(
+        text="<i>Trying To Restarting.....</i>",
+        quote=True
+    )
+    await asyncio.sleep(5)
+    await msg.edit("<i>Server Restarted Successfully ✅</i>")
+    try:
+        os.execl(sys.executable, sys.executable, *sys.argv)
+    except Exception as e:
+        print(e)
 
 if USE_PAYMENT:
     @Bot.on_message(filters.command('add_prem') & filters.private & filters.user(ADMINS))

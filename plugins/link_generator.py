@@ -2,7 +2,7 @@ from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from bot import Bot
 from config import ADMINS
-from helper_func import encode, get_message_id
+from helper_func import encode, get_channel_id, get_message_id
 
 
 @Bot.on_message(filters.private & filters.user(ADMINS) & filters.command('batch'))
@@ -36,7 +36,8 @@ async def batch(client: Client, message: Message):
             await second_message.reply("❌ Error\n\nthis Forwarded Post is not from my DB Channel or this Link is taken from DB Channel", quote = True)
             continue
         
-    string = f"get-{f_msg_id * abs(client.db_channel.id)}-{s_msg_id * abs(client.db_channel.id)}"
+    channelid = await get_channel_id(client, first_message)
+    string = f"savory+{channelid}+{f_msg_id}+{s_msg_id}"
     base64_string = await encode(string)
     link = f"https://t.me/{client.username}?start={base64_string}"
     reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("🔁 Share URL", url=f'https://telegram.me/share/url?url={link}')]])
@@ -58,8 +59,8 @@ async def link_generator(client: Client, message: Message):
             break
         else:
             await channel_message.reply("❌ Error\n\nthis Forwarded Post is not from my DB Channel or this Link is not taken from DB Channel", quote = True)
-            continue
-    base64_string = await encode(f"get-{msg_id * abs(client.db_channel.id)}")
+    channelid = await get_channel_id(client, channel_message)
+    base64_string = await encode(f"savory+{channelid}+{msg_id}")
     link = f"https://t.me/{client.username}?start={base64_string}"
     reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("🔁 Share URL", url=f'https://telegram.me/share/url?url={link}')]])
     await channel_message.reply_text(f"<b>Here is your link</b>\n\n{link}", quote=True, reply_markup=reply_markup)

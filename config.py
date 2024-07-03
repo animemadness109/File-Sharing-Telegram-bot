@@ -1,9 +1,9 @@
 from operator import add
 import os
 import logging
-#import dotenv
+import dotenv
 
-#dotenv.load_dotenv()
+dotenv.load_dotenv()
 
 from logging.handlers import RotatingFileHandler
 
@@ -28,7 +28,7 @@ APP_ID = int(os.environ.get("APP_ID", ""))
 #your api hash from https://my.telegram.org/apps
 API_HASH = os.environ.get("API_HASH", "")
 #your channel_id from https://t.me/MissRose_bot by forwarding dummy message to rose and applying command `/id` in reply to that message
-CHANNEL_ID = int(os.environ.get("CHANNEL_ID", ""))
+DBCHANNELS = [int(x) for x in os.environ.get("DBCHANNELS", "").split()]
 #your database channel link
 CHANNEL_LINK = os.environ.get("CHANNEL_LINK", "")
 #your id of telegram can be found by https://t.me/MissRose_bot with '/id' command
@@ -98,20 +98,14 @@ PRICE5 = os.environ.get("PRICE5", "999 rs")
 FORCE_MSG = os.environ.get("FORCE_MSG", "Hello {first}\n\n<b>You need to join in my Channel/Group to use me\n\nKindly Please join Channel</b> 🥺")
 #custom caption 
 CUSTOM_CAPTION = os.environ.get("CUSTOM_CAPTION", None)
-#protected content so that no files can be sent from the bot to anyone. recommended False
-# TRUE for yes FALSE if no
-PROTECT_CONTENT = True if os.environ.get("PROTECT_CONTENT", "FALSE") == "TRUE" else False
-#used if you dont need buttons on database channel.
-# True for yes False if no
-DISABLE_CHANNEL_BUTTON = True if os.environ.get("DISABLE_CHANNEL_BUTTON", "TRUE") == "TRUE" else False
-#you can add admin inside the bot
+# Put all admins id here with spaces
+ADMINS = [int(x) for x in os.environ.get("ADMINS", "").split()]
 
 
 
 
 #no need to add anything from now on
 
-ADMINS = []
 ADMINS.append(OWNER_ID)
 
 LOG_FILE_NAME = "logs.txt"
