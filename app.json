@@ -6,7 +6,7 @@
       "file",
       "sharing"
     ],
-    "repository": "https://github.com/Sachinanand99/File-Sharing-Telegram-bot",
+    "repository": "https://github.com/Sachinanand99/File-Sharing-Telegram-bot/tree/Multiple-database",
     "logo": "https://ibb.co/FgPVtzw",
     "env": {
         "ADMINS" : {
@@ -16,7 +16,8 @@
         },
       "TG_BOT_TOKEN": {
         "description": "Your Bot token, Get it from @Botfather",
-        "value": ""
+        "value": "",
+        "required": true
       },
       "APP_ID":{
         "description": "your app id, take it from my.telegram.org",
@@ -28,28 +29,33 @@
       },
       "DB_URL": {
         "description": "Paste your mongo db url",
-        "value": ""
+        "value": "",
+        "required": true
       },
       "DB_NAME":{
         "description": "Enter your DATABASE_NAME ",
         "value": "",
         "required":false
       },
-      "CHANNEL_ID":{
+      "DBCHANNELS":{
         "description": "make a channel (database channel), then make the bot as admin in channel, and it's put channel id",
-        "value": ""
+        "value": "",
+        "required": true
       },
       "CHANNEL_LINK":{
         "description": "Enter your database channel link",
-        "value": ""
+        "value": "",
+        "required": true
       },
       "OWNER_ID": {
         "description": "enter owners id",
-        "value" : ""
+        "value" : "",
+        "required":true
       },
       "OWNER_TAG":{
         "description":"Enter owner's tag without @",
-        "value": ""
+        "value": "",
+        "required": false
       },
       "TIME": {
         "description":"Enter the time after which message gets deleted",
@@ -115,16 +121,6 @@
         "description": "Enter custom caption",
         "value": null, 
         "required": false
-      },
-      "PROTECT_CONTENT": {
-        "description" : "Enter True if need to stop forwarding from bot",
-        "value" : "False",
-        "required": false
-      },
-      "DISABLE_CHANNEL_BUTTON": {
-        "description" : "Enter False if need to enable buttons in database channel",
-        "value" : "True",
-        "required" : false
       }
     },
     "buildpacks": [

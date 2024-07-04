@@ -281,7 +281,7 @@ async def auth_command(client: Bot, message: Message):
     return
 
 
-@Bot.on_message(filters.command('ping')  & filters.private)
+@Bot.on_message(filters.command('ping')  & filters.private & filters.user(ADMINS))
 async def check_ping_command(client: Bot, message: Message):
     start_t = time.time()
     rm = await message.reply_text("Pinging....", quote=True)
