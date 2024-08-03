@@ -1,5 +1,6 @@
 import time
 from aiohttp import web
+from database.database import full_adminbase
 from plugins import web_server
 from pyrogram import Client
 from pyrogram.enums import ParseMode
@@ -8,6 +9,21 @@ from pyromod import listen
 from datetime import datetime
 
 from config import ADMINS, API_HASH, APP_ID, LOGGER, TG_BOT_TOKEN, TG_BOT_WORKERS, FORCE_SUB_CHANNEL,FORCE_SUB_CHANNEL2, DBCHANNELS, PORT, OWNER_ID
+
+
+# fix for current pyrogram 
+from pyrogram import utils
+
+def get_peer_type_new(peer_id: int) -> str:
+    peer_id_str = str(peer_id)
+    if not peer_id_str.startswith("-"):
+        return "user"
+    elif peer_id_str.startswith("-100"):
+        return "channel"
+    else:
+        return "chat"
+utils.get_peer_type = get_peer_type_new
+
 
 class Bot(Client):
     def __init__(self):
@@ -69,6 +85,15 @@ class Bot(Client):
             text="Bot has started! 😉"
         )
 
+        initadmin = await full_adminbase()
+        for x in initadmin:
+            if x in ADMINS:
+                continue
+            ADMINS.append(x)
+        await self.send_message(
+            chat_id=OWNER_ID,
+            text="Bot has started! 😉"
+        )
 
         self.set_parse_mode(ParseMode.HTML)
         self.LOGGER(__name__).info(f"Bot Running..!")

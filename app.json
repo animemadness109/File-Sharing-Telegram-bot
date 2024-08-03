@@ -42,11 +42,6 @@
         "value": "",
         "required": true
       },
-      "CHANNEL_LINK":{
-        "description": "Enter your database channel link",
-        "value": "",
-        "required": true
-      },
       "OWNER_ID": {
         "description": "enter owners id",
         "value" : "",
@@ -74,17 +69,17 @@
       },
       "BOT_STATS_TEXT": {
         "description": "Enter your custom bot stat text with fillings",
-        "value": "<b>BOT UPTIME</b>\n{uptime}",
+        "value": "<b>BOT UPTIME 🌺</b>\n{uptime}",
         "required": false
       },
       "USER_REPLY_TEXT":{
         "description": "Enter user reply text when they interact with bot",
-        "value": "❌Don't send me messages directly I'm only File Share bot!",
+        "value": "Don't send me messages directly I'm only File Share bot! 📌",
         "required" : false
       },
       "START_MSG":{
         "description":"Enter your bot start message when user interact for the first time.",
-        "value": "Hello {first}\n\nI can store private files in Specified Channel and other users can access it from special link.",
+        "value": "Hello {first}\n\nI can store private files in Specified Channel and other users can access it from special link. 💾",
         "required": false
       },
       "USE_SHORTLINK":{

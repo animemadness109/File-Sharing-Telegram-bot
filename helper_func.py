@@ -28,7 +28,7 @@ async def is_subscribed(filter, client, update):
         return True
 
 async def is_subscribed2(filter, client, update):
-    if not FORCE_SUB_CHANNEL:
+    if not FORCE_SUB_CHANNEL2:
         return True
     user_id = update.from_user.id
     if user_id in ADMINS:
@@ -55,7 +55,6 @@ async def decode(base64_string):
     string_bytes = base64.urlsafe_b64decode(base64_bytes) 
     string = string_bytes.decode("ascii")
     return string
-
 
 async def get_messages(client, channel,  message_ids):
     messages = []

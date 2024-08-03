@@ -10,6 +10,11 @@
 Telegram Bot to store Posts and Documents and it can Access by Special Links.
 I Guess This Will Be Usefull For Many People.....😇. 
 
+### Changelogs
+1. added code system. You should provide users the code with bot tag instead of the link. If your bot got banned it will be tough to change every link of your channel.
+2. user need to use `/ch2l` command for converting to link.
+3. fixed single force sub channel issue.
+
 ### Features
 - Fully customisable.
 - Customisable welcome
@@ -19,7 +24,16 @@ I Guess This Will Be Usefull For Many People.....😇.
 
 ### Setup
 - Add the bot to Database Channel with all permission
-
+- Go to botfather and add the following commands - 
+````
+start - check whether bot is online🟢
+ch2l - convert hash to link here 🧑‍💻
+ping - to ping the bot🙂
+stats - uptime of the bot [admin only]⏱
+users - total users active [admin only]👥
+batch - to generate the link in batch [admin only]🔗
+genlink - to generate link [admin only]🔀
+````
 ### Installation
 #### Deploy on Heroku
 **BEFORE YOU DEPLOY ON HEROKU, YOU SHOULD FORK THE REPO AND CHANGE ITS NAME TO ANYTHING ELSE**<br>
@@ -42,9 +56,9 @@ The fastest way to deploy the application is to click the **Deploy to Koyeb** bu
 
 
 #### Deploy in your VPS
+Download zip of this branch and extract.
+cd to the directory
 ````bash
-git clone https://github.com/Sachinanand99/File-Sharing-Bot.git
-cd File-Sharing-Bot
 pip3 install -r requirements.txt
 # <Create config.py appropriately>
 #if you are using any hosting services use dotenvtemplate.txt for putting environment variables
@@ -53,14 +67,18 @@ python3 main.py
 
 ## Basic Commands
 - `/start` - Check whether bot is online 🟢
-- `/ping` - For checking bot alive or not(admin only)
+- `/ping` - For checking ping of the bot 🔥
+- `/ch2l` - For converting code to link for respected bot
 - `/stats` - Uptime of the bot (admin only) ⏱️
 - `/users` - Total users active (admin only) 👥
 - `/batch` - To generate the link in batch (admin only) 🔗
 - `/genlink` - To generate link (admin only) 🔀
 - `/auth` - For using the bot which will send the ID to the owner's DM. The owner will add the admin to config file and restart the bot.
 - `/add_prem` - adding user to premium services(admins only)
-- `/restart` - For restarting the bot(owner only)
+- `/restart` - For restarting the bot(admins only)
+- `/admins` - list all admins(admins only)
+- `/add_admin` - For adding new admins(owner only) restart recommended
+- `/del_admin` - For removing admins(owner only) restart recommended
 - `/broadcast` - Reply to any message to broadcast it to all users(owner only).
 
 
@@ -130,8 +148,6 @@ python3 main.py
 * TG_BOT_TOKEN
 * APP_ID
 * API_HASH
-* DB_URL
-* CHANNEL_LINK
 * DBCHANNELS
 * OWNER_ID
 * OWNER_TAG

@@ -1,8 +1,8 @@
 from operator import add
 import os
 import logging
-# import dotenv
 
+# import dotenv
 # dotenv.load_dotenv()
 
 from logging.handlers import RotatingFileHandler
@@ -17,9 +17,9 @@ if FORCE_SUB_CHANNEL > FORCE_SUB_CHANNEL2:
     FORCE_SUB_CHANNEL = temp
 
 #bot stats
-BOT_STATS_TEXT = os.environ.get("BOTS_STATS_TEXT","<b>BOT UPTIME</b>\n{uptime}")
+BOT_STATS_TEXT = os.environ.get("BOTS_STATS_TEXT","<b>BOT UPTIME 🌺</b>\n{uptime}")
 #send custom message when user interact with bot
-USER_REPLY_TEXT = os.environ.get("USER_REPLY_TEXT", "❌Don't send me messages directly I'm only File Share bot!")
+USER_REPLY_TEXT = os.environ.get("USER_REPLY_TEXT", "Don't send me messages directly I'm only File Share bot! 📌")
 
 #your bot token here from https://telegram.me/BotFather
 TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "") 
@@ -29,8 +29,8 @@ APP_ID = int(os.environ.get("APP_ID", ""))
 API_HASH = os.environ.get("API_HASH", "")
 #your channel_id from https://t.me/MissRose_bot by forwarding dummy message to rose and applying command `/id` in reply to that message
 DBCHANNELS = [int(x) for x in os.environ.get("DBCHANNELS", "").split()]
-#your database channel link
-CHANNEL_LINK = os.environ.get("CHANNEL_LINK", "")
+#your channel_id for which old one was used before
+
 #your id of telegram can be found by https://t.me/MissRose_bot with '/id' command
 OWNER_ID = int(os.environ.get("OWNER_ID", ""))
 #port set to default 8080
@@ -96,16 +96,18 @@ PRICE5 = os.environ.get("PRICE5", "999 rs")
 
 #force message for joining the channel
 FORCE_MSG = os.environ.get("FORCE_MSG", "Hello {first}\n\n<b>You need to join in my Channel/Group to use me\n\nKindly Please join Channel</b> 🥺")
+#protected content so that no files can be sent from the bot to anyone. recommended False
+# TRUE for yes FALSE if no
+PROTECT_CONTENT = True if os.environ.get("PROTECT_CONTENT", "FALSE") == "TRUE" else False
 #custom caption 
 CUSTOM_CAPTION = os.environ.get("CUSTOM_CAPTION", None)
-# Put all admins id here with spaces
-ADMINS = [int(x) for x in os.environ.get("ADMINS", "").split()]
+#you can add admin inside the bot
 
 
 
 
 #no need to add anything from now on
-
+ADMINS = []
 ADMINS.append(OWNER_ID)
 
 LOG_FILE_NAME = "logs.txt"
