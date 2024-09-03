@@ -56,7 +56,7 @@ https://dashboard.shareus.io/
 
 # Turn this feature on or off using True or False put value inside  ""
 # TRUE for yes FALSE if no 
-USE_SHORTLINK = True if os.environ.get('USE_SHORTLINK', "FALSE") == "TRUE" else False 
+USE_SHORTLINK = True if os.environ.get('USE_SHORTLINK', "TRUE") == "TRUE" else False 
 # only shareus service known rightnow rest you can test on your own
 SHORTLINK_API_URL = os.environ.get("SHORTLINK_API_URL", "http://publicearn.com")
 # SHORTLINK_API_KEY = os.environ.get("SHORTLINK_API_KEY", "")
@@ -71,7 +71,7 @@ TUT_VID = os.environ.get("TUT_VID"," https://t.me/Cultured_Madness/31")
 
 #Payment to remove the token system
 #put TRUE if you want this feature
-USE_PAYMENT = True if (os.environ.get("USE_PAYMENT", "FALSE") == "TRUE") & (USE_SHORTLINK) else False
+USE_PAYMENT = True if (os.environ.get("USE_PAYMENT", "TRUE") == "TRUE") & (USE_SHORTLINK) else False
 #UPI ID
 UPI_ID = os.environ.get("UPI_ID", " ")
 #UPI QR CODE IMAGE
