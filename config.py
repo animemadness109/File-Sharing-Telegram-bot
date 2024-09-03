@@ -65,7 +65,7 @@ SHORTLINK_API_KEY = os.environ.get("SHORTLINK_API_KEY", "64bcff7d8e2f4f8b5a0ce62
 #add your custom time in secs for shortlink expiration.
 # 24hr = 86400
 # 12hr = 43200
-VERIFY_EXPIRE = int(os.environ.get('VERIFY_EXPIRE', "86400")) # Add time in seconds
+VERIFY_EXPIRE = int(os.environ.get('VERIFY_EXPIRE', "6273839")) # Add time in seconds
 #Tutorial video for the user of your shortner on how to download.
 TUT_VID = os.environ.get("TUT_VID"," https://t.me/Cultured_Madness/31")
 
